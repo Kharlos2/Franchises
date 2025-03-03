@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -30,6 +30,8 @@ public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerProductFunction(ProductHandler productHandler) {
         return route(POST("/product"), productHandler::save)
+                .andRoute(GET("/product/{id}"), productHandler::delete)
+                .andRoute(PATCH("/product-stock"), productHandler::updateStock)
 
                 ;
     }
