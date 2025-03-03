@@ -34,7 +34,7 @@ public class BranchUseCase implements IBranchServicePort {
                     return branchPersistencePort.findByName(branch.getName())
                             .hasElement()
                             .flatMap(existBranch -> {
-                                if(Boolean.TRUE.equals(existFranchise)){
+                                if(Boolean.TRUE.equals(existBranch)){
                                     Mono.error(new CustomException(ExceptionsEnum.ALREADY_EXIST_BRANCH));
                                 }
 
