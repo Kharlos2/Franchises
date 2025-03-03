@@ -1,12 +1,13 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.handlers.BranchHandler;
 import co.com.pragma.api.handlers.FranchiseHandler;
+import co.com.pragma.api.handlers.ProductHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -18,4 +19,19 @@ public class RouterRest {
 
                 ;
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> routerBranchFunction(BranchHandler branchHandler) {
+        return route(POST("/branch"), branchHandler::save)
+
+                ;
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> routerProductFunction(ProductHandler productHandler) {
+        return route(POST("/product"), productHandler::save)
+
+                ;
+    }
+
 }

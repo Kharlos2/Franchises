@@ -7,6 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface IFranchiseRepository extends ReactiveCrudRepository<FranchiseEntity, Long> {
 
-    @Query("SELECT * FROM public.capabilities WHERE name ILIKE :name")
+    @Query("SELECT * FROM public.franchises WHERE name ILIKE :name")
     Mono<FranchiseEntity> findByName(String franchiseName);
 }

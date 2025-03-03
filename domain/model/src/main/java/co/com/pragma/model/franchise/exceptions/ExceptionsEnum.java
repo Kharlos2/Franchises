@@ -1,7 +1,10 @@
 package co.com.pragma.model.franchise.exceptions;
 
 public enum ExceptionsEnum {
-    ALREADY_EXIST_FRANCHISE(409,"Already exist franchise name")
+    ALREADY_EXIST_FRANCHISE(409,"Already exist franchise name"),
+    FRANCHISE_NOT_FOUND(409,"Franchise not found"),
+    ALREADY_EXIST_BRANCH(409, "Already exist branch name")
+
     ;
 
     private final int httpStatus;
