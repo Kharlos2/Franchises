@@ -7,5 +7,8 @@ public interface IProductPersistencePort {
 
     Mono<Product> save (Product product);
     Mono<Product> findByName (String productName);
+    Mono<Product> findById (Long productId);
+    Mono<Void> deleteById(Long productId);
+    Mono<Product> updateStock(Product product);
 
 }

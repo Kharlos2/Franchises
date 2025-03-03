@@ -27,4 +27,21 @@ public class ProductPersistenceAdapter implements IProductPersistencePort {
         return productRepository.findByName(productName)
                 .map(productEntityMapper::toModel);
     }
+
+    @Override
+    public Mono<Product> findById(Long productId) {
+        return productRepository.findById(productId)
+                .map(productEntityMapper::toModel);
+    }
+
+    @Override
+    public Mono<Void> deleteById(Long productId) {
+        return productRepository.deleteById(productId);
+    }
+
+    @Override
+    public Mono<Product> updateStock(Product product) {
+        return productRepository.save(productEntityMapper.toEntity(product))
+                .map(productEntityMapper::toModel);
+    }
 }

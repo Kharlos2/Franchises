@@ -5,6 +5,7 @@ import co.com.pragma.model.franchise.api.IProductServicePort;
 import co.com.pragma.model.franchise.exceptions.CustomException;
 import co.com.pragma.model.franchise.exceptions.ExceptionsEnum;
 import co.com.pragma.model.franchise.models.BranchProduct;
+import co.com.pragma.model.franchise.models.DeleteResponse;
 import co.com.pragma.model.franchise.models.Product;
 import co.com.pragma.model.franchise.spi.IBranchPersistencePort;
 import co.com.pragma.model.franchise.spi.IBranchProductPersistencePort;
@@ -35,7 +36,7 @@ public class ProductUseCase implements IProductServicePort {
                             .hasElement()
                             .flatMap(existProduct -> {
                                 if(Boolean.TRUE.equals(existProduct)){
-                                    Mono.error(new CustomException(ExceptionsEnum.ALREADY_EXIST_PRODUCT));
+                                    return Mono.error(new CustomException(ExceptionsEnum.ALREADY_EXIST_PRODUCT));
                                 }
 
                                 Mono<Product> productMono = productPersistencePort.save(product);
@@ -48,6 +49,29 @@ public class ProductUseCase implements IProductServicePort {
                             });
 
                 });
+    }
+
+    @Override
+    public Mono<DeleteResponse> deleteProductById(Long productId) {
+        return productPersistencePort.findById(productId)
+                .hasElement()
+                .flatMap(exist -> {
+                    if (Boolean.FALSE.equals(exist)){
+                        return Mono.error(new CustomException(ExceptionsEnum.PRODUCT_NOT_FOUNT));
+                    }
+                    productPersistencePort.deleteById(productId);
+                    return  Mono.just(new DeleteResponse("Producto eliminado correctamente"));
+                });
+    }
+
+    @Override
+    public Mono<Product> updateStock(Product product) {
+        return productPersistencePort.findById(product.getId())
+                .flatMap(existingProduct -> {
+                    existingProduct.setStock(product.getStock());
+                    return productPersistencePort.save(existingProduct);
+                })
+                .switchIfEmpty(Mono.error(new CustomException(ExceptionsEnum.PRODUCT_NOT_FOUNT)));
     }
 
 }

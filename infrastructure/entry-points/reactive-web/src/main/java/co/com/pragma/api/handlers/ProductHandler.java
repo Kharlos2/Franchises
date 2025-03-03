@@ -1,14 +1,11 @@
 package co.com.pragma.api.handlers;
 
-import co.com.pragma.api.dtos.brand.BranchResponseDto;
-import co.com.pragma.api.dtos.brand.BranchSaveDto;
 import co.com.pragma.api.dtos.product.ProductResponseDto;
 import co.com.pragma.api.dtos.product.ProductSaveDto;
-import co.com.pragma.api.mappers.IBranchHandlerMapper;
+import co.com.pragma.api.dtos.product.ProductUpdateStockDto;
 import co.com.pragma.api.mappers.IProductHandlerMapper;
-import co.com.pragma.model.franchise.api.IBranchServicePort;
 import co.com.pragma.model.franchise.api.IProductServicePort;
-import co.com.pragma.model.franchise.models.Branch;
+import co.com.pragma.model.franchise.models.DeleteResponse;
 import co.com.pragma.model.franchise.models.Product;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -32,6 +29,26 @@ public class ProductHandler {
         Mono<Product> productMono = request.bodyToMono(ProductSaveDto.class).map(productHandlerMapper::toModel);
         return productMono.flatMap(product ->
                 ServerResponse.status(HttpStatusCode.valueOf(201))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(productServicePort.save(product)
+                                .map(productHandlerMapper::toProductResponseDTO), ProductResponseDto.class)
+        );
+    }
+
+    public Mono<ServerResponse> delete(ServerRequest request) {
+        long id = Long.parseLong(request.pathVariable("id"));
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productServicePort.deleteProductById(id), DeleteResponse.class);
+    }
+
+
+    public Mono<ServerResponse> updateStock(ServerRequest request) {
+
+        Mono<Product> productMono = request.bodyToMono(ProductUpdateStockDto.class).map(productHandlerMapper::updateStockToModel);
+        return productMono.flatMap(product ->
+                ServerResponse.status(HttpStatusCode.valueOf(200))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(productServicePort.save(product)
                                 .map(productHandlerMapper::toProductResponseDTO), ProductResponseDto.class)
