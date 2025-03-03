@@ -1,4 +1,4 @@
-package co.com.pragma.model.capacity.exceptions;
+package co.com.pragma.model.franchise.exceptions;
 
 public class HttpException extends Exception {
   private final int status;

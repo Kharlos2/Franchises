@@ -1,7 +1,6 @@
 package co.com.pragma.api.utils;
 
-import co.com.pragma.model.capacity.exceptions.CustomException;
-import co.com.pragma.model.capacity.exceptions.HttpException;
+import co.com.pragma.model.franchise.exceptions.CustomException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
@@ -17,11 +16,6 @@ public class CustomAttributes extends DefaultErrorAttributes {
     public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
         Map<String,Object> errorAttributes = new HashMap<>();
         Throwable throwable = super.getError(request);
-        if (throwable instanceof HttpException httpException){
-            errorAttributes.put("status", httpException.getStatus());
-            errorAttributes.put("message", httpException.getMessage());
-            return errorAttributes;
-        }
         if (!(throwable instanceof CustomException customException)) {
             return errorAttributes;
         }
