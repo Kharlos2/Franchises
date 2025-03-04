@@ -6,7 +6,8 @@ public enum ExceptionsEnum {
     ALREADY_EXIST_BRANCH(409, "Already exist branch name"),
     BRANCH_NOT_FOUND(404, "Branch not found" ),
     ALREADY_EXIST_PRODUCT(409, "Already exist product name"),
-    PRODUCT_NOT_FOUNT(404,"Product not found")
+    PRODUCT_NOT_FOUNT(404,"Product not found"),
+    INVALID_ID_DELETE(400,"The id must be a positive integer")
     ;
 
     private final int httpStatus;

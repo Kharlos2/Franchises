@@ -10,8 +10,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Table("public.branch_product")
 public class BranchProductEntity {
     @Id
@@ -20,4 +18,13 @@ public class BranchProductEntity {
     private Long branchId;
     @Column("product_id")
     private Long productId;
+
+    public BranchProductEntity(Long id, Long branchId, Long productId) {
+        this.id = id;
+        this.branchId = branchId;
+        this.productId = productId;
+    }
+
+    public BranchProductEntity() {
+    }
 }

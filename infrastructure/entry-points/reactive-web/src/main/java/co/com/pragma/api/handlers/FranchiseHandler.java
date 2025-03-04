@@ -5,7 +5,6 @@ import co.com.pragma.api.dtos.franchise.FranchiseSaveDto;
 import co.com.pragma.api.mappers.IFranchiseHandlerMapper;
 import co.com.pragma.model.franchise.api.IFranchiseServicePort;
 import co.com.pragma.model.franchise.models.Franchise;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -33,5 +32,17 @@ public class FranchiseHandler {
                                 .map(franchiseHandlerMapper::toFranchiseResponseDTO), FranchiseResponseDto.class)
         );
     }
+
+    public Mono<ServerResponse> findTopProducts (ServerRequest request){
+        Long franchiseId = Long.parseLong(String.valueOf(request.queryParam("franchiseId").orElse("0")));
+
+
+        return franchiseServicePort.findProductsStock(franchiseId)
+                .collectList()
+                .flatMap(products -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(products));
+    }
+
 
 }

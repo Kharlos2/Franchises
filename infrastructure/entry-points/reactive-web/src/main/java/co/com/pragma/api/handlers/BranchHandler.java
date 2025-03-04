@@ -2,7 +2,6 @@ package co.com.pragma.api.handlers;
 
 import co.com.pragma.api.dtos.brand.BranchResponseDto;
 import co.com.pragma.api.dtos.brand.BranchSaveDto;
-import co.com.pragma.api.dtos.franchise.FranchiseResponseDto;
 import co.com.pragma.api.mappers.IBranchHandlerMapper;
 import co.com.pragma.model.franchise.api.IBranchServicePort;
 import co.com.pragma.model.franchise.models.Branch;

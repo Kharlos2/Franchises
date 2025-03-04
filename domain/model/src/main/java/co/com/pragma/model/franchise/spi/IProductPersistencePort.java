@@ -1,6 +1,7 @@
 package co.com.pragma.model.franchise.spi;
 
 import co.com.pragma.model.franchise.models.Product;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface IProductPersistencePort {
@@ -9,6 +10,5 @@ public interface IProductPersistencePort {
     Mono<Product> findByName (String productName);
     Mono<Product> findById (Long productId);
     Mono<Void> deleteById(Long productId);
-    Mono<Product> updateStock(Product product);
-
+    Mono<Product> findTopProductByBranchId(Long branchId);
 }
