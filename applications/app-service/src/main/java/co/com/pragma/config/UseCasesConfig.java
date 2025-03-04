@@ -11,8 +11,9 @@ import co.com.pragma.usecase.franchise.BranchUseCase;
 import co.com.pragma.usecase.franchise.FranchiseUseCase;
 import co.com.pragma.usecase.franchise.ProductUseCase;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-
+@Configuration
 public class UseCasesConfig {
 
         private final IFranchiseRepository franchiseRepository;
@@ -46,14 +47,19 @@ public class UseCasesConfig {
         }
 
         @Bean
-        public IFranchiseServicePort iFranchiseServicePort( IFranchisePersistencePort franchisePersistencePort ){
-                return new FranchiseUseCase(franchisePersistencePort);
+        public IBranchPersistencePort iBranchPersistencePort () {
+            return new BranchPersistenceAdapter(branchRepository, branchEntityMapper);
         }
 
         @Bean
-        public IBranchPersistencePort iBranchPersistencePort () {
-                return new BranchPersistenceAdapter(branchRepository, branchEntityMapper);
+        public IFranchiseServicePort iFranchiseServicePort(
+                IFranchisePersistencePort franchisePersistencePort,
+                IBranchPersistencePort iBranchPersistencePort,
+                IProductPersistencePort productPersistencePort
+        ){
+                return new FranchiseUseCase(franchisePersistencePort, iBranchPersistencePort, productPersistencePort);
         }
+
 
         @Bean
         public IFranchiseBranchPersistencePort franchiseBranchPersistencePort() {

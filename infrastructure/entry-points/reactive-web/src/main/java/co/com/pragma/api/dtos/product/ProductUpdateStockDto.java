@@ -1,15 +1,20 @@
 package co.com.pragma.api.dtos.product;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class ProductUpdateStockDto {
 
     private Long id;
     private Integer stock;
 
+    public ProductUpdateStockDto(Long id, Integer stock) {
+        this.id = id;
+        this.stock = stock;
+    }
+
+    public ProductUpdateStockDto() {
+    }
 }

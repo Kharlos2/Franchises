@@ -9,8 +9,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Table("public.franchises")
 public class FranchiseEntity {
 
@@ -18,4 +16,11 @@ public class FranchiseEntity {
     private Long id;
     private String name;
 
+    public FranchiseEntity(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public FranchiseEntity() {
+    }
 }

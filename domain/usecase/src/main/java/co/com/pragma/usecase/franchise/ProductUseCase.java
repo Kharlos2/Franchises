@@ -27,51 +27,36 @@ public class ProductUseCase implements IProductServicePort {
     @Override
     public Mono<Product> save(Product product) {
         return branchPersistencePort.findById(product.getBranchId())
-                .hasElement()
-                .flatMap(existBranch -> {
-                    if (Boolean.FALSE.equals(existBranch)){
-                        return Mono.error(new CustomException(ExceptionsEnum.BRANCH_NOT_FOUND));
-                    }
-                    return productPersistencePort.findByName(product.getName())
-                            .hasElement()
-                            .flatMap(existProduct -> {
-                                if(Boolean.TRUE.equals(existProduct)){
-                                    return Mono.error(new CustomException(ExceptionsEnum.ALREADY_EXIST_PRODUCT));
-                                }
-
-                                Mono<Product> productMono = productPersistencePort.save(product);
-
-                                productMono.map(productSaved ->
-                                        branchProductPersistencePort.save(new BranchProduct(product.getBranchId(), productSaved.getId()))
-                                );
-
-                                return productMono;
-                            });
-
-                });
+                .switchIfEmpty(Mono.error(new CustomException(ExceptionsEnum.BRANCH_NOT_FOUND)))
+                .flatMap(branch ->
+                        productPersistencePort.findByName(product.getName())
+                                .flatMap(existingProduct -> Mono.error(new CustomException(ExceptionsEnum.ALREADY_EXIST_PRODUCT)))
+                                .then(Mono.defer(() -> productPersistencePort.save(product)))
+                )
+                .flatMap(productSaved ->
+                        branchProductPersistencePort.save(new BranchProduct(product.getBranchId(), productSaved.getId()))
+                                .then(Mono.defer(() -> Mono.just(productSaved)))
+                );
     }
 
     @Override
     public Mono<DeleteResponse> deleteProductById(Long productId) {
         return productPersistencePort.findById(productId)
-                .hasElement()
-                .flatMap(exist -> {
-                    if (Boolean.FALSE.equals(exist)){
-                        return Mono.error(new CustomException(ExceptionsEnum.PRODUCT_NOT_FOUNT));
-                    }
-                    productPersistencePort.deleteById(productId);
-                    return  Mono.just(new DeleteResponse("Producto eliminado correctamente"));
-                });
+                .switchIfEmpty(Mono.error(new CustomException(ExceptionsEnum.PRODUCT_NOT_FOUNT)))
+                .flatMap(product -> productPersistencePort.deleteById(productId)
+                        .thenReturn(new DeleteResponse("Producto eliminado correctamente"))
+                );
     }
 
     @Override
     public Mono<Product> updateStock(Product product) {
         return productPersistencePort.findById(product.getId())
+                .switchIfEmpty(Mono.error(new CustomException(ExceptionsEnum.PRODUCT_NOT_FOUNT))) // Primero manejamos si no existe
                 .flatMap(existingProduct -> {
                     existingProduct.setStock(product.getStock());
                     return productPersistencePort.save(existingProduct);
-                })
-                .switchIfEmpty(Mono.error(new CustomException(ExceptionsEnum.PRODUCT_NOT_FOUNT)));
+                });
     }
+
 
 }

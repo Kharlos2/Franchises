@@ -26,27 +26,15 @@ public class BranchUseCase implements IBranchServicePort {
     @Override
     public Mono<Branch> save(Branch branch) {
         return franchisePersistencePort.findById(branch.getFranchiseId())
-                .hasElement()
-                .flatMap( existFranchise -> {
-                    if (Boolean.FALSE.equals(existFranchise)){
-                        return Mono.error(new CustomException(ExceptionsEnum.FRANCHISE_NOT_FOUND));
-                    }
-                    return branchPersistencePort.findByName(branch.getName())
-                            .hasElement()
-                            .flatMap(existBranch -> {
-                                if(Boolean.TRUE.equals(existBranch)){
-                                    Mono.error(new CustomException(ExceptionsEnum.ALREADY_EXIST_BRANCH));
-                                }
-
-                                Mono<Branch> branchMono = branchPersistencePort.save(branch);
-
-                                branchMono.map(branchSaved ->
-                                        franchiseBranchPersistencePort.save(new FranchiseBranch(branch.getFranchiseId(), branchSaved.getId()))
-                                );
-
-                                return branchMono;
-                            });
-
-                });
+                .switchIfEmpty(Mono.error(new CustomException(ExceptionsEnum.FRANCHISE_NOT_FOUND)))
+                .flatMap(franchise ->
+                        branchPersistencePort.findByName(branch.getName())
+                                .flatMap(existingBranch -> Mono.error(new CustomException(ExceptionsEnum.ALREADY_EXIST_BRANCH)))
+                                .then(Mono.defer(() -> branchPersistencePort.save(branch)))
+                )
+                .flatMap(branchSaved ->
+                        franchiseBranchPersistencePort.save(new FranchiseBranch(branch.getFranchiseId(), branchSaved.getId()))
+                                .thenReturn(branchSaved)
+                );
     }
 }

@@ -16,6 +16,7 @@ public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFranchiseFunction(FranchiseHandler franchiseHandler) {
         return route(POST("/franchise"), franchiseHandler::save)
+                .andRoute(GET("/franchise"),franchiseHandler::findTopProducts)
 
                 ;
     }
@@ -30,7 +31,7 @@ public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerProductFunction(ProductHandler productHandler) {
         return route(POST("/product"), productHandler::save)
-                .andRoute(GET("/product/{id}"), productHandler::delete)
+                .andRoute(DELETE("/product"), productHandler::delete)
                 .andRoute(PATCH("/product-stock"), productHandler::updateStock)
 
                 ;

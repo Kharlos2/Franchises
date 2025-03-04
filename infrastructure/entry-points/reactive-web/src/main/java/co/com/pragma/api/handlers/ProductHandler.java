@@ -36,11 +36,11 @@ public class ProductHandler {
     }
 
     public Mono<ServerResponse> delete(ServerRequest request) {
-        long id = Long.parseLong(request.pathVariable("id"));
+        Long productId = Long.parseLong(String.valueOf(request.queryParam("productId").orElse("0")));
 
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productServicePort.deleteProductById(id), DeleteResponse.class);
+                .body(productServicePort.deleteProductById(productId), DeleteResponse.class);
     }
 
 
@@ -50,7 +50,7 @@ public class ProductHandler {
         return productMono.flatMap(product ->
                 ServerResponse.status(HttpStatusCode.valueOf(200))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(productServicePort.save(product)
+                        .body(productServicePort.updateStock(product)
                                 .map(productHandlerMapper::toProductResponseDTO), ProductResponseDto.class)
         );
     }

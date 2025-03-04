@@ -1,16 +1,12 @@
 package co.com.pragma.r2dbc.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Table("public.products")
 public class ProductEntity {
 
@@ -19,4 +15,12 @@ public class ProductEntity {
     private String name;
     private Integer stock;
 
+    public ProductEntity(Long id, String name, Integer stock) {
+        this.id = id;
+        this.name = name;
+        this.stock = stock;
+    }
+
+    public ProductEntity() {
+    }
 }

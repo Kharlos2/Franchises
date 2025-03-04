@@ -40,8 +40,8 @@ public class ProductPersistenceAdapter implements IProductPersistencePort {
     }
 
     @Override
-    public Mono<Product> updateStock(Product product) {
-        return productRepository.save(productEntityMapper.toEntity(product))
+    public Mono<Product> findTopProductByBranchId(Long branchId) {
+        return productRepository.findTopProductByBranchId(branchId)
                 .map(productEntityMapper::toModel);
     }
 }
